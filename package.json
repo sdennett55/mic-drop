@@ -1,0 +1,73 @@
+{
+  "name": "micdrop-soundboard",
+  "version": "1.2.0",
+  "description": "A Windows soundboard that mixes clips with your microphone for games.",
+  "private": true,
+  "main": "main.js",
+  "author": "MicDrop",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "check": "node --check main.js && node --check preload.js && node --check src/renderer.js && node --check scripts/generate-icon.js && node --check scripts/prepare-vbcable.js",
+    "generate-icon": "node scripts/generate-icon.js",
+    "prepare-vbcable": "node scripts/prepare-vbcable.js",
+    "predist": "npm run generate-icon && npm run prepare-vbcable",
+    "dist": "electron-builder --win nsis",
+    "pack": "electron-builder --dir"
+  },
+  "devDependencies": {
+    "electron": "^44.7.0",
+    "electron-builder": "26.15.3",
+    "png-to-ico": "^3.0.2",
+    "pngjs": "^7.0.0"
+  },
+  "overrides": {
+    "@electron/get": "5.1.0"
+  },
+  "build": {
+    "appId": "com.micdrop.soundboard",
+    "productName": "MicDrop Soundboard",
+    "asar": true,
+    "files": [
+      "main.js",
+      "preload.js",
+      "src/**/*",
+      "package.json",
+      "LICENSE"
+    ],
+    "extraResources": [
+      {
+        "from": "third_party/VB-CABLE-NOTICE.txt",
+        "to": "licenses/VB-CABLE-NOTICE.txt"
+      }
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "MicDrop-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true,
+      "include": "build/installer.nsh",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "MicDrop Soundboard"
+    }
+  }
+}
